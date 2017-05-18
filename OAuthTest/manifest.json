@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+
+  "name": "OAuth Test",
+  "description": "OAuth Test",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "identity",
+    "activeTab",
+    "https://ajax.googleapis.com/",
+    "https://graph.microsoft.com/",
+    "https://login.live.com/"
+  ]
+}

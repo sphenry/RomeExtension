@@ -1,0 +1,59 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<!--<html>
+  <head>
+    <title>Getting Started Extension's Popup</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+        font-size: 100%;
+      }
+      #status {
+        /* avoid an excessively wide status text */
+        white-space: pre;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 400px;
+      }
+    </style>
+
+
+    <script src="popup.js"></script>
+  </head>
+  <body>
+    <div id="status"></div>
+    <img id="image-result" hidden>
+  </body>
+</html>
+
+-->
+<html>
+<head>
+	<title>Browser test</title>
+	<script type="text/javascript" src="lib/graph-js-sdk-web.js"></script>
+	<script type="text/javascript" src="secrets.js"></script>
+	<script type="text/javascript" src="graph.js"></script>
+
+</head>
+<body>
+<h2>alease check the Node.js sample for more examples on calling the Graph.</h2>
+
+<p>
+By loading this page, we called /me endpoint on the Microsoft Graph.  Open your browser's' JavaScript console to see the result!
+</p>
+<br>
+<p>Your user photo from /me/photo/$value:</p>
+<img id="profileImg" />
+<p>
+Also, you can update your profile picture:
+<!--<input type="file" onchange="updateProfilePicture()"><br>-->
+</p>
+<br>
+
+</body>
+</html>
+
