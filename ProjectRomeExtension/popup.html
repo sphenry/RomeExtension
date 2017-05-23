@@ -10,7 +10,7 @@
   <script type="text/javascript" src="secrets.js"></script>
   <script type="text/javascript" src="graph.js"></script>
   <script type="text/javascript" src="popup.js"></script>
-  
+
   <style>
     body {
       background-color: lightblue;
@@ -20,21 +20,53 @@
       color: white;
       text-align: center;
     }
+
     p {
       font-family: verdana;
       font-size: 20px;
     }
 
+    .styled-select select {
+      width: 268px;
+      margin: 10px;
+      padding: 5px;
+      font-size: 16px;
+      line-height: 1;
+      border: 0;
+      border-radius: 0;
+      height: 34px;
+      -webkit-appearance: none;
+    }
+
+        .launch-button button {
+      width: 268px;
+      padding: 5px;
+      margin: 10px;
+      font-size: 16px;
+      line-height: 1;
+      border: 0;
+      border-radius: 0;
+      height: 34px;
+      -webkit-appearance: none;
+    }
   </style>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 </head>
+
 <body>
   <h2>Project Rome</h2>
+  <div class="styled-select">
+    <select id="devicelist"></select>
+  </div>
+  <div class=launch-button>
+    <button id="launchButton">Launch</button>
 
-  <select id="devicelist"></select>
-  <br>
-  <button id="launchButton">Launch</button>
-   <br>
-  <button id="activityButton">Create Activity</button>
+  </div>
+  <div class=launch-button>
+    <button id="activityButton">Create Activity</button>
+  </div>
 
 </body>
+
 </html>
