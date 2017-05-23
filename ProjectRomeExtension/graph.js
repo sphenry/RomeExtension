@@ -1,117 +1,112 @@
-	
-function getQueryParams(qs) {
-    qs = qs.split('+').join(' ');
+	function getQueryParams(qs) {
+		var query_string = {};
+		var vars = qs.split("#");
+		for (var i = 0; i < vars.length; i++) {
+			var pair = vars[i].split("=");
+			// If first entry with this name
+			if (typeof query_string[pair[0]] === "undefined") {
+				query_string[pair[0]] = decodeURIComponent(pair[1]);
+				// If second entry with this name
+			} else if (typeof query_string[pair[0]] === "string") {
+				var arr = [query_string[pair[0]], decodeURIComponent(pair[1])];
+				query_string[pair[0]] = arr;
+				// If third or later entry with this name
+			} else {
+				query_string[pair[0]].push(decodeURIComponent(pair[1]));
+			}
+		}
+		return query_string;
+	}
 
-    var params = {},
-        tokens,
-        re = /[#?&]?([^=]+)=([^&]*)/g;
+	function createGuid()
+	{
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
+			return v.toString(16);
+		});
+	}
 
-    while (tokens = re.exec(qs)) {
-        params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
-    }
+	function launchUri(deviceId, uri, callback) {
+		superagent
+			.post('https://graph.microsoft.com/beta/me/devices/' + deviceId + '/commands')
+			.send({
+				"Type": "LaunchUri",
+				"Payload": {
+					"uri": uri
+				}
+			})
+			.set('Authorization', 'Bearer ' + SECRETS.ACCESS_TOKEN)
+			.set('Content-Type', 'application/json')
+			//  .set('Content-Length', message.length)
+			.end((err, res) => {
+				callback(err, res);
+			});
+	}
 
-    return params;
-}
+	function createActivity(uri, callback) {
 
-function getQueryParams2(qs) {
-	var query_string = {};
-  var vars = qs.split("#");
-  for (var i=0;i<vars.length;i++) {
-    var pair = vars[i].split("=");
-        // If first entry with this name
-    if (typeof query_string[pair[0]] === "undefined") {
-      query_string[pair[0]] = decodeURIComponent(pair[1]);
-        // If second entry with this name
-    } else if (typeof query_string[pair[0]] === "string") {
-      var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
-      query_string[pair[0]] = arr;
-        // If third or later entry with this name
-    } else {
-      query_string[pair[0]].push(decodeURIComponent(pair[1]));
-    }
-  } 
-  return query_string;
-}
+		var activity = [{
+    "appActivityId": "/article?12345",
+    "activationUrl": "http://www.contoso.com/article?id=12345",
+    "name": "What's new in Project Rome?",
+    "description": "Find out how to make your apps integrate with Windows from any platform",
+    "backgroundColor": "AliceBlue",
+    "appIdUrl": "http://timelinetest.blob.core.windows.net/windowsappidentity",
+}];
+		var aString = JSON.stringify(activity);
 
-function getGraph() {
-    	var client = MicrosoftGraph.Client.init({
+		superagent
+			.put('https://graph.microsoft-ppe.com/testAFS/me/activities/8342210')
+			.send(aString)
+			.set('Authorization', 'Bearer ' + SECRETS.ACCESS_TOKEN)
+			.set('Content-Type', 'text/plain')
+			//  .set('Content-Length', message.length)
+			.end((err, res) => {
+				callback(err, res);
+			});
+	}
+
+		function createEngagement(uri, callback) {
+
+		var now = new Date();
+		var prevTime = new Date(now.getTime() - (5*60*1000)); //-5 mins
+		var engagement = [{
+    "startDateTime": prevTime.toISOString(),//"2017-05-09T10:54:04.3457274+00:00",
+    "lastActiveDateTime": now.toISOString()
+}]
+		var eString = JSON.stringify(engagement);
+		var uuid = createGuid();
+		var newUri = uri.replace('https://ppe.activity.windows.com/V1', 'https://graph.microsoft-ppe.com/testAFS');
+
+		superagent
+			.put(newUri + '/historyItems/' + uuid)
+			.send(eString)
+			.set('Authorization', 'Bearer ' + SECRETS.ACCESS_TOKEN)
+			.set('Content-Type', 'text/plain')
+			//  .set('Content-Length', message.length)
+			.end((err, res) => {
+				callback(err, res);
+			});
+	}
+
+	function getGraph() {
+		var client = MicrosoftGraph.Client.init({
 			debugLogging: true,
-			authProvider: function(done) {
+			authProvider: function (done) {
 				done(null, SECRETS.ACCESS_TOKEN);
 			}
 		});
 
 		client
-			.api('/me')
-			.select("displayName")
+			.api('/me/devices')
+			.version("beta")
 			.get((err, res) => {
 				if (err) {
 					console.log(err);
 					return;
 				}
 				console.log(res);
+				deviceList = res.value;
+				buildDeviceTable(res.value);
 			});
-
-		// Example of downloading the user's profile photo and displaying it in an img tag
-		client
-			.api('/me/photo/$value')
-			.responseType('blob')
-			.get((err, res, rawResponse) => {
-				if (err) throw err;
-
-				const url = window.URL;
-				const blobUrl = url.createObjectURL(rawResponse.xhr.response);
-				document.getElementById("profileImg").setAttribute("src", blobUrl);
-			});
-}
-
-    
-    document.addEventListener('DOMContentLoaded', function() {
-     console.log("Hello!");
-	 var redirectUri = chrome.identity.getRedirectURL('oauth2');
-	 STACK_APP = {
-    id           : 'f7360ed3-fb64-4e37-8cc7-ecd1eedb5269',
-    scope        : 'https://graph.microsoft.com/ccs.readWrite https://graph.microsoft.com/user.read',
-
-    request_uri  : 'https://login.live.com/oauth20_authorize.srf',
-    redirect_uri : redirectUri
-};
-//ES6 template string!
-var requestUrl = `${STACK_APP.request_uri}?client_id=${STACK_APP.id}&response_type=token&scope=${STACK_APP.scope}&redirect_uri=${STACK_APP.redirect_uri}`;
-//https://developer.chrome.com/extensions/identity
-//https://developer.chrome.com/extensions/app_identity#update_manifest
-chrome.identity.launchWebAuthFlow({
-    url         : requestUrl,
-    interactive : true
-}, function (url) {
-	
-    console.log('redirected to: ' + url);
-var query = getQueryParams2(url);
-SECRETS.ACCESS_TOKEN = query.access_token;
-getGraph();
-});
-    
-
-
-		function updateProfilePicture() {
-			var file = document.querySelector('input[type=file]').files[0];
-			var reader = new FileReader();
-
-			reader.addEventListener("load", function () {
-				client
-					.api('/me/photo/$value')
-					.put(file, (err, res) => {
-						if (err) {
-							console.log(err);
-							return;
-						}
-						console.log("We've updated your picture!");
-					});
-			}, false);
-
-			if (file) {
-				reader.readAsDataURL(file);
-			}
-		}
-});
-    
+	}
