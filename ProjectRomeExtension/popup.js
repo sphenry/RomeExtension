@@ -39,8 +39,9 @@
 			var tabUrl = 'http://bing.com';
 			chrome.tabs.getSelected(null, function (tab) {
 				tabUrl = tab.url;
+				
 
-				createActivity(tabUrl, (err, res) => {
+				createActivity(tabUrl, tab.title,  (err, res) => {
 					if (err) {
 						console.log(err);
 						return;

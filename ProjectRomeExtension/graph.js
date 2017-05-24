@@ -43,13 +43,18 @@
 			});
 	}
 
-	function createActivity(uri, callback) {
+	function createActivity(uri, title, callback) {
+
+   //get site name
+   var parser = document.createElement('a');
+parser.href = uri;
+
 
 		var activity = [{
-    "appActivityId": "/article?12345",
-    "activationUrl": "http://www.contoso.com/article?id=12345",
-    "name": "What's new in Project Rome?",
-    "description": "Find out how to make your apps integrate with Windows from any platform",
+    "appActivityId": encodeURI(uri),
+    "activationUrl": uri,
+    "name": title,
+    "description": parser.hostname,
     "backgroundColor": "AliceBlue",
     "appIdUrl": "http://timelinetest.blob.core.windows.net/windowsappidentity",
 }];
