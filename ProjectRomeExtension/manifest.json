@@ -3,7 +3,7 @@
 
   "name": "Project Rome",
   "description": "This extension uses Microsoft Project Rome to connect to devices, and generate UserActivities",
-  "version": "1.0",
+  "version": "0.1.0",
 
   "background": {
     "page": "background.html",

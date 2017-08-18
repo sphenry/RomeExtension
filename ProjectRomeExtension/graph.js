@@ -57,7 +57,21 @@ function getQueryParams(qs) {
 		superagent.get("http://cardedurls.azurewebsites.net/card?url=" + uri).end((err, res) =>  {
 				//callback(err, res);
 			var adaptiveCard = res;
-				
+			
+			var contentInfo = {
+				"actionStatus": {
+				"identifier": "crossDeviceTask",
+				"name": "resumeTask"
+				},
+				"@context": "http://schema.org",
+				"target": {
+				"EntryPoint": {
+					"actionPlatform": "desktop"
+				}
+				},
+				"@type": "Action"
+			}
+
 			var activity = [{
 				"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
 				"appActivityId": uuid,		
@@ -76,19 +90,7 @@ function getQueryParams(qs) {
         		"displayText": titleString,
         		"content": res.body
    			},
-			"contentInfo": {
-				"actionStatus": {
-				"identifier": "crossDeviceTask",
-				"name": "resumeTask"
-				},
-				"@context": "http://schema.org",
-				"target": {
-				"EntryPoint": {
-					"actionPlatform": "desktop"
-				}
-				},
-				"@type": "Action"
-			}
+			"contentInfo": contentInfo
 			}];
 			// {
 			// 		"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
