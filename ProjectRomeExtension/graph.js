@@ -100,6 +100,7 @@ function getQueryParams(qs) {
 			// 		}]
        	 	// 	}
 
+
 			var aString = JSON.stringify(activity);
 
 			superagent
