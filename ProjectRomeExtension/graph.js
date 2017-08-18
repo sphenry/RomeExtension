@@ -64,7 +64,7 @@ function getQueryParams(qs) {
 				"activationUrl": uri,
 				"name": titleString,
 				"appDisplayName": "Continue from your phone",
-				"backgroundColor": "#00000000",
+				"backgroundColor": "black",
 			"fallbackUrl": uri,
 			"contentUrl": uri,
 			"visualElements": {
@@ -73,7 +73,7 @@ function getQueryParams(qs) {
 					"alternativeText": "Contoso, Ltd.",
 					"addImageQuery": "false",
 				},
-        		
+        		"displayText": titleString,
         		"content": res.body
    			},
 			"contentInfo": {
