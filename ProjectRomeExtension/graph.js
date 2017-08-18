@@ -1,4 +1,12 @@
-	function getQueryParams(qs) {
+	function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+	
+
+function getQueryParams(qs) {
 		var query_string = {};
 		var vars = qs.split("#");
 		for (var i = 0; i < vars.length; i++) {
@@ -30,8 +38,8 @@
 		superagent
 			.post('https://graph.microsoft.com/beta/me/devices/' + deviceId + '/commands')
 			.send({
-				"Type": "LaunchUri",
-				"Payload": {
+				"type": "launchUri",
+				"payload": {
 					"uri": uri
 				}
 			})
@@ -43,27 +51,67 @@
 			});
 	}
 
-	function createActivity(uri, callback) {
+	function createActivity(uri, titleString, callback) {
+		var uuid = uuidv4();
 
-		var activity = [{
-    "appActivityId": "/article?12345",
-    "activationUrl": "http://www.contoso.com/article?id=12345",
-    "name": "What's new in Project Rome?",
-    "description": "Find out how to make your apps integrate with Windows from any platform",
-    "backgroundColor": "AliceBlue",
-    "appIdUrl": "http://timelinetest.blob.core.windows.net/windowsappidentity",
-}];
-		var aString = JSON.stringify(activity);
+		superagent.get("http://cardedurls.azurewebsites.net/card?url=" + uri).end((err, res) =>  {
+				//callback(err, res);
+			var adaptiveCard = res;
+				
+			var activity = [{
+				"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
+				"appActivityId": uuid,		
+				"activationUrl": uri,
+				"name": titleString,
+				"appDisplayName": "Continue from your phone",
+				"backgroundColor": "#00000000",
+			"fallbackUrl": uri,
+			"contentUrl": uri,
+			"visualElements": {
+				"attribution": {
+					"iconUrl": "http://www.contoso.com/icon",
+					"alternativeText": "Contoso, Ltd.",
+					"addImageQuery": "false",
+				},
+        		
+        		"content": res.body
+   			},
+			"contentInfo": {
+				"actionStatus": {
+				"identifier": "crossDeviceTask",
+				"name": "resumeTask"
+				},
+				"@context": "http://schema.org",
+				"target": {
+				"EntryPoint": {
+					"actionPlatform": "desktop"
+				}
+				},
+				"@type": "Action"
+			}
+			}];
+			// {
+			// 		"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			// 		"type": "AdaptiveCard",
+			// 		"body":
+			// 		[{
+			// 			"type": "TextBlock",
+			// 			"text": "Contoso MainPage"
+			// 		}]
+       	 	// 	}
 
-		superagent
-			.put('https://graph.microsoft-ppe.com/testAFS/me/activities/8342210')
-			.send(aString)
-			.set('Authorization', 'Bearer ' + SECRETS.ACCESS_TOKEN)
-			.set('Content-Type', 'text/plain')
-			//  .set('Content-Length', message.length)
-			.end((err, res) => {
-				callback(err, res);
-			});
+			var aString = JSON.stringify(activity);
+
+			superagent
+				.put('https://graph.microsoft.com/beta/me/activities/'+Math.floor(1 + Math.random() * 10000))
+				.send(aString)
+				.set('Authorization', 'Bearer ' + SECRETS.ACCESS_TOKEN)
+				.set('Content-Type', 'text/plain')
+				//  .set('Content-Length', message.length)
+				.end((err, res) => {
+					callback(err, res);
+				});
+		});
 	}
 
 		function createEngagement(uri, callback) {
@@ -76,7 +124,7 @@
 }]
 		var eString = JSON.stringify(engagement);
 		var uuid = createGuid();
-		var newUri = uri.replace('https://ppe.activity.windows.com/V1', 'https://graph.microsoft-ppe.com/testAFS');
+		var newUri = uri.replace('https://activity.windows.com/V1', 'https://graph.microsoft.com/beta');
 
 		superagent
 			.put(newUri + '/historyItems/' + uuid)
@@ -87,6 +135,7 @@
 			.end((err, res) => {
 				callback(err, res);
 			});
+		
 	}
 
 	function getGraph() {

@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
 
-  "name": "Getting started example",
-  "description": "This extension shows a Google Image search result for the current page",
+  "name": "Project Rome",
+  "description": "This extension uses Microsoft Project Rome to connect to devices, and generate UserActivities",
   "version": "1.0",
 
   "background": {
@@ -21,6 +21,7 @@
     "https://ajax.googleapis.com/",
     "https://graph.microsoft.com/",
     "https://ppe.activity.windows.com/",
-    "https://login.live.com/"
+    "https://login.live.com/",
+    "http://cardedurls.azurewebsites.net/"
   ]
 }

@@ -9,6 +9,7 @@
 		select.style.display = "block";
 	}
 
+
 	document.addEventListener('DOMContentLoaded', function () {
 
 		var launchButton = document.getElementById('launchButton');
@@ -39,24 +40,24 @@
 			var tabUrl = 'http://bing.com';
 			chrome.tabs.getSelected(null, function (tab) {
 				tabUrl = tab.url;
+				tabTitle = tab.title;
 
-				createActivity(tabUrl, (err, res) => {
+				createActivity(tabUrl, tabTitle, (err, res) => {
 					if (err) {
 						console.log(err);
+						
 						return;
 					}
 					console.log(res);
-          createEngagement(res.header.location, (err, res) => {
-            if (err) {
-              console.log(err);
-              return;
-            }
-            console.log(res);
-            });
+					createEngagement(res.header.location, (err, res) => {
+						if (err) {
+							console.log(err);
+							return;
+						}
+						console.log(res);
+					});
 				});
 			});
-
-
 		}, false);
 
 		var redirectUri = chrome.identity.getRedirectURL('oauth2');

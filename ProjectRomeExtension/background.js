@@ -28,8 +28,8 @@ function launchUri(deviceId, uri, callback) {
     superagent
         .post('https://graph.microsoft.com/beta/me/devices/' + deviceId + '/commands')
         .send({
-            "Type": "LaunchUri",
-            "Payload": {
+            "type": "launchUri",
+            "payload": {
                 "uri": uri
             }
         })
@@ -47,7 +47,7 @@ function refreshLanguage() {
     if (language == " invalid_language_code")
       language = "???";
 
-    chrome.browserAction.setBadgeText({"text": language, tabId: selectedId});
+    //chrome.browserAction.setBadgeText({"text": language, tabId: selectedId});
 
       return;
 
@@ -79,7 +79,7 @@ function refreshLanguage() {
              console.log(tab.url);
               tabUrl = tab.url;
     //<option value="b2afd7e0-c5d6-5e24-be33-8cfe676d16e9">DESKTOP-DORLJT1</option>
-            launchUri('b2afd7e0-c5d6-5e24-be33-8cfe676d16e9', tabUrl, (err, res) => {
+            launchUri('1ea886a9-62f2-5bda-b5ad-1ed5ab0b38af', tabUrl, (err, res) => {
                 if (err) {
                     console.log(err);
                     return;
@@ -105,6 +105,9 @@ chrome.tabs.onSelectionChanged.addListener(function(tabId, props) {
 });
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-  selectedId = tabs[0].id;
-  refreshLanguage();
+  if(tabs.length > 0)
+  {
+      selectedId = tabs[0].id;
+    refreshLanguage();
+  }
 });
