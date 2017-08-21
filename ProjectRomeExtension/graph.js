@@ -53,7 +53,7 @@ function getQueryParams(qs) {
 
 	function createActivity(uri, titleString, callback) {
 		var uuid = uuidv4();
-
+		console.log("Calling CardedURLs");
 		superagent.get("http://cardedurls.azurewebsites.net/card?url=" + uri).end((err, res) =>  {
 				//callback(err, res);
 			var adaptiveCard = res;
@@ -74,6 +74,27 @@ function getQueryParams(qs) {
 
 			var activity = [{
 				"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
+				"appActivityId": uri,		
+				"activationUrl": uri,
+				"name": titleString,
+				"appDisplayName": "Continue from your phone",
+				"backgroundColor": "black",
+			"fallbackUrl": uri,
+			"contentUrl": uri,
+			"visualElements": {
+				"attribution": {
+					"iconUrl": "https://cdn.portableapps.com/GoogleChromePortable_256.png",
+					"alternativeText": "Chrome",
+					"addImageQuery": "false",
+				},
+        		"displayText": titleString,
+        		"content": res.body
+   			},
+			"contentInfo": contentInfo
+			}];
+
+						var activity = [{
+				"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
 				"appActivityId": uuid,		
 				"activationUrl": uri,
 				"name": titleString,
@@ -92,6 +113,8 @@ function getQueryParams(qs) {
    			},
 			"contentInfo": contentInfo
 			}];
+
+			
 			// {
 			// 		"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 			// 		"type": "AdaptiveCard",

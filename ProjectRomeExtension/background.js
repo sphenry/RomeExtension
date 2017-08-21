@@ -4,33 +4,40 @@ var selectedId = -1;
 
 function createActivityForTab(tabId) {
     chrome.tabs.get(tabId, function (tab) {
-        tabUrl = tab.url;
-        var tabTitle = tab.title;
-
-        if (!tabTitle) {
-            tabTitle = tabUrl;
-        }
-
-        if(tabUrl.startsWith("http"))
-        {
-            createActivity(tabUrl, tabTitle, (err, res) => {
-                if (err) {
-                    console.log(err);
-                    
-                    return;
-                }
-                console.log(res);
-                createEngagement(res.header.location, (err, res) => {
-                    if (err) {
-                        console.log(err);
-                        return;
+        var startingTabUrl = tab.url;
+        setTimeout(function(){ //ignore re-directs
+            chrome.tabs.get(tabId, function (tab) {
+                var tabUrl = tab.url;
+                
+                if(startingTabUrl == tabUrl)
+                {
+                    var tabTitle = tab.title;
+                    if (!tabTitle) {
+                        tabTitle = tabUrl;
                     }
-                    console.log(res);
-                });
+
+                    if(tabUrl.startsWith("http"))
+                    {
+                        createActivity(tabUrl, tabTitle, (err, res) => {
+                            if (err) {
+                                console.log(err);
+                                
+                                return;
+                            }
+                            console.log(res);
+                            createEngagement(res.header.location, (err, res) => {
+                                if (err) {
+                                    console.log(err);
+                                    return;
+                                }
+                                console.log(res);
+                            });
+                        });
+
+                    } 
+                }
             });
-
-        } 
-
+        }, 10000);
     });
 }
 
