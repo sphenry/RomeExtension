@@ -22,6 +22,7 @@
     "https://graph.microsoft.com/",
     "https://ppe.activity.windows.com/",
     "https://login.live.com/",
-    "http://cardedurls.azurewebsites.net/"
+    "http://cardedurls.azurewebsites.net/",
+    "https://login.microsoftonline.com/"
   ]
 }

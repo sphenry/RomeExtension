@@ -58,27 +58,48 @@ function getQueryParams(qs) {
 				//callback(err, res);
 			var adaptiveCard = res;
 			
-			var contentInfo = {
-				"actionStatus": {
-				"identifier": "crossDeviceTask",
-				"name": "resumeTask"
-				},
-				"@context": "http://schema.org",
-				"target": {
-				"EntryPoint": {
-					"actionPlatform": "desktop"
-				}
-				},
-				"@type": "Action"
-			}
+			// var contentInfo = {
+			// 	"actionStatus": {
+			// 	"identifier": "crossDeviceTask",
+			// 	"name": "resumeTask"
+			// 	},
+			// 	"@context": "http://schema.org",
+			// 	"target": {
+			// 	"EntryPoint": {
+			// 		"actionPlatform": "desktop"
+			// 	}
+			// 	},
+			// 	"@type": "Action"
+			// }
 
-			var activity = [{
+			// var activity = [{
+			// 	"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
+			// 	"appActivityId": uri,		
+			// 	"activationUrl": uri,
+			// 	"name": titleString,
+			// 	// "appDisplayName": "Continue from your phone",
+			// 	// "backgroundColor": "black",
+			// "fallbackUrl": uri,
+			// "contentUrl": uri,
+			// "visualElements": {
+			// 	"attribution": {
+			// 		"iconUrl": "https://cdn.portableapps.com/GoogleChromePortable_256.png",
+			// 		"alternativeText": "Chrome",
+			// 		"addImageQuery": "false",
+			// 	},
+        	// 	"displayText": titleString,
+        	// 	"content": res.body
+   			// }//,
+			// // "contentInfo": contentInfo
+			// }];
+
+						var activity = [{
 				"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
-				"appActivityId": uri,		
+				"appActivityId": uuid,		
 				"activationUrl": uri,
 				"name": titleString,
-				"appDisplayName": "Continue from your phone",
-				"backgroundColor": "black",
+				//"appDisplayName": "Continue from your phone",
+				//"backgroundColor": "black",
 			"fallbackUrl": uri,
 			"contentUrl": uri,
 			"visualElements": {
@@ -89,29 +110,8 @@ function getQueryParams(qs) {
 				},
         		"displayText": titleString,
         		"content": res.body
-   			},
-			"contentInfo": contentInfo
-			}];
-
-						var activity = [{
-				"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
-				"appActivityId": uuid,		
-				"activationUrl": uri,
-				"name": titleString,
-				"appDisplayName": "Continue from your phone",
-				"backgroundColor": "black",
-			"fallbackUrl": uri,
-			"contentUrl": uri,
-			"visualElements": {
-				"attribution": {
-					"iconUrl": "http://www.contoso.com/icon",
-					"alternativeText": "Contoso, Ltd.",
-					"addImageQuery": "false",
-				},
-        		"displayText": titleString,
-        		"content": res.body
-   			},
-			"contentInfo": contentInfo
+   			}//,
+			//"contentInfo": contentInfo
 			}];
 
 			
@@ -132,7 +132,7 @@ function getQueryParams(qs) {
 				.put('https://graph.microsoft.com/beta/me/activities/'+Math.floor(1 + Math.random() * 10000))
 				.send(aString)
 				.set('Authorization', 'Bearer ' + SECRETS.ACCESS_TOKEN)
-				.set('Content-Type', 'text/plain')
+				.set('Content-Type', 'text/json')
 				//  .set('Content-Length', message.length)
 				.end((err, res) => {
 					callback(err, res);
@@ -145,7 +145,7 @@ function getQueryParams(qs) {
 		var now = new Date();
 		var prevTime = new Date(now.getTime() - (5*60*1000)); //-5 mins
 		var engagement = [{
-    "startDateTime": prevTime.toISOString(),//"2017-05-09T10:54:04.3457274+00:00",
+    "startedDateTime": prevTime.toISOString(),//"2017-05-09T10:54:04.3457274+00:00",
     "lastActiveDateTime": now.toISOString()
 }]
 		var eString = JSON.stringify(engagement);
@@ -156,7 +156,7 @@ function getQueryParams(qs) {
 			.put(newUri + '/historyItems/' + uuid)
 			.send(eString)
 			.set('Authorization', 'Bearer ' + SECRETS.ACCESS_TOKEN)
-			.set('Content-Type', 'text/plain')
+			.set('Content-Type', 'text/json')
 			//  .set('Content-Length', message.length)
 			.end((err, res) => {
 				callback(err, res);
