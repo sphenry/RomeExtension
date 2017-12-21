@@ -3,42 +3,48 @@
 var selectedId = -1;
 
 function createActivityForTab(tabId) {
-    chrome.tabs.get(tabId, function (tab) {
-        var startingTabUrl = tab.url;
-        setTimeout(function(){ //ignore re-directs
-            chrome.tabs.get(tabId, function (tab) {
-                var tabUrl = tab.url;
-                
-                if(startingTabUrl == tabUrl)
-                {
-                    var tabTitle = tab.title;
-                    if (!tabTitle) {
-                        tabTitle = tabUrl;
-                    }
-
-                    if(tabUrl.startsWith("http"))
+    login().then(function(response) {
+        console.log("Activity Login Success!", response);
+        chrome.tabs.get(tabId, function (tab) {
+            var startingTabUrl = tab.url;
+            setTimeout(function(){ //ignore re-directs
+                chrome.tabs.get(tabId, function (tab) {
+                    var tabUrl = tab.url;
+                    
+                    if(startingTabUrl == tabUrl)
                     {
-                        createActivity(tabUrl, tabTitle, (err, res) => {
-                            if (err) {
-                                console.log(err);
-                                
-                                return;
-                            }
-                            console.log(res);
-                            createEngagement(res.header.location, (err, res) => {
+                        var tabTitle = tab.title;
+                        if (!tabTitle) {
+                            tabTitle = tabUrl;
+                        }
+    
+                        if(tabUrl.startsWith("http"))
+                        {
+                            createActivity(tabUrl, tabTitle, (err, res) => {
                                 if (err) {
                                     console.log(err);
+                                    
                                     return;
                                 }
                                 console.log(res);
+                                createEngagement(res.header.location, (err, res) => {
+                                    if (err) {
+                                        console.log(err);
+                                        return;
+                                    }
+                                    console.log(res);
+                                });
                             });
-                        });
-
-                    } 
-                }
-            });
-        }, 10000);
-    });
+    
+                        } 
+                    }
+                });
+            }, 10000);
+        });
+      }, function(error) {
+        console.error("Activty Login Failed!", error);
+      })
+   
 }
 
 document.addEventListener('DOMContentLoaded', function () {

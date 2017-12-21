@@ -1,12 +1,4 @@
-	function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
-	
-
-function getQueryParams(qs) {
+	function getQueryParams(qs) {
 		var query_string = {};
 		var vars = qs.split("#");
 		for (var i = 0; i < vars.length; i++) {
@@ -26,10 +18,10 @@ function getQueryParams(qs) {
 		return query_string;
 	}
 
-	function createGuid()
-	{
-		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-			var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
+	function createGuid() {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+			var r = Math.random() * 16 | 0,
+				v = c === 'x' ? r : (r & 0x3 | 0x8);
 			return v.toString(16);
 		});
 	}
@@ -52,12 +44,12 @@ function getQueryParams(qs) {
 	}
 
 	function createActivity(uri, titleString, callback) {
-		var uuid = uuidv4();
+		var uuid = createGuid();
 		console.log("Calling CardedURLs");
-		superagent.get("http://cardedurls.azurewebsites.net/card?url=" + uri).end((err, res) =>  {
-				//callback(err, res);
+		superagent.get("http://cardedurls.azurewebsites.net/card?url=" + uri).end((err, res) => {
+			//callback(err, res);
 			var adaptiveCard = res;
-			
+
 			// var contentInfo = {
 			// 	"actionStatus": {
 			// 	"identifier": "crossDeviceTask",
@@ -87,34 +79,34 @@ function getQueryParams(qs) {
 			// 		"alternativeText": "Chrome",
 			// 		"addImageQuery": "false",
 			// 	},
-        	// 	"displayText": titleString,
-        	// 	"content": res.body
-   			// }//,
+			// 	"displayText": titleString,
+			// 	"content": res.body
+			// }//,
 			// // "contentInfo": contentInfo
 			// }];
 
-						var activity = [{
+			var activity = [{
 				"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
-				"appActivityId": uuid,		
+				"appActivityId": uuid,
 				"activationUrl": uri,
 				"name": titleString,
-				//"appDisplayName": "Continue from your phone",
+				"appDisplayName": "Chrome",
 				//"backgroundColor": "black",
-			"fallbackUrl": uri,
-			"contentUrl": uri,
-			"visualElements": {
-				"attribution": {
-					"iconUrl": "https://cdn.portableapps.com/GoogleChromePortable_256.png",
-					"alternativeText": "Chrome",
-					"addImageQuery": "false",
-				},
-        		"displayText": titleString,
-        		"content": res.body
-   			}//,
-			//"contentInfo": contentInfo
+				"fallbackUrl": uri,
+				"contentUrl": uri,
+				"visualElements": {
+					"attribution": {
+						"iconUrl": "https://cdn.portableapps.com/GoogleChromePortable_256.png",
+						"alternativeText": "Chrome",
+						"addImageQuery": "false",
+					},
+					"displayText": titleString,
+					"content": res.body
+				} //,
+				//"contentInfo": contentInfo
 			}];
 
-			
+
 			// {
 			// 		"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 			// 		"type": "AdaptiveCard",
@@ -123,13 +115,13 @@ function getQueryParams(qs) {
 			// 			"type": "TextBlock",
 			// 			"text": "Contoso MainPage"
 			// 		}]
-       	 	// 	}
+			// 	}
 
 
 			var aString = JSON.stringify(activity);
 
 			superagent
-				.put('https://graph.microsoft.com/beta/me/activities/'+Math.floor(1 + Math.random() * 10000))
+				.put('https://graph.microsoft.com/beta/me/activities/' + Math.floor(1 + Math.random() * 10000))
 				.send(aString)
 				.set('Authorization', 'Bearer ' + SECRETS.ACCESS_TOKEN)
 				.set('Content-Type', 'text/json')
@@ -140,14 +132,14 @@ function getQueryParams(qs) {
 		});
 	}
 
-		function createEngagement(uri, callback) {
+	function createEngagement(uri, callback) {
 
 		var now = new Date();
-		var prevTime = new Date(now.getTime() - (5*60*1000)); //-5 mins
+		var prevTime = new Date(now.getTime() - (5 * 60 * 1000)); //-5 mins
 		var engagement = [{
-    "startedDateTime": prevTime.toISOString(),//"2017-05-09T10:54:04.3457274+00:00",
-    "lastActiveDateTime": now.toISOString()
-}]
+			"startedDateTime": prevTime.toISOString(), //"2017-05-09T10:54:04.3457274+00:00",
+			"lastActiveDateTime": now.toISOString()
+		}]
 		var eString = JSON.stringify(engagement);
 		var uuid = createGuid();
 		var newUri = uri.replace('https://activity.windows.com/V1', 'https://graph.microsoft.com/beta');
@@ -161,7 +153,7 @@ function getQueryParams(qs) {
 			.end((err, res) => {
 				callback(err, res);
 			});
-		
+
 	}
 
 	function getGraph() {
