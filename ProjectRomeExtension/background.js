@@ -1,113 +1,75 @@
-// Copyright (c) 2009 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+
 
 var selectedId = -1;
 
-function getQueryParams(qs) {
-    var query_string = {};
-    var vars = qs.split("#");
-    for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split("=");
-        // If first entry with this name
-        if (typeof query_string[pair[0]] === "undefined") {
-            query_string[pair[0]] = decodeURIComponent(pair[1]);
-            // If second entry with this name
-        } else if (typeof query_string[pair[0]] === "string") {
-            var arr = [query_string[pair[0]], decodeURIComponent(pair[1])];
-            query_string[pair[0]] = arr;
-            // If third or later entry with this name
-        } else {
-            query_string[pair[0]].push(decodeURIComponent(pair[1]));
-        }
-    }
-    return query_string;
-}
-
-function launchUri(deviceId, uri, callback) {
-    superagent
-        .post('https://graph.microsoft.com/beta/me/devices/' + deviceId + '/commands')
-        .send({
-            "type": "launchUri",
-            "payload": {
-                "uri": uri
-            }
-        })
-        .set('Authorization', 'Bearer ' + SECRETS.ACCESS_TOKEN)
-        .set('Content-Type', 'application/json')
-        //  .set('Content-Length', message.length)
-        .end((err, res) => {
-            callback(err, res);
-        });
-}
-
-function refreshLanguage() {
-  chrome.tabs.detectLanguage(null, function(language) {
-    console.log(language);
-    if (language == " invalid_language_code")
-      language = "???";
-
-    //chrome.browserAction.setBadgeText({"text": language, tabId: selectedId});
-
-      return;
-
-
-
-    var redirectUri = chrome.identity.getRedirectURL('oauth2');
-    GRAPH_APP = {
-        id: 'f7360ed3-fb64-4e37-8cc7-ecd1eedb5269',
-        scope: 'https://graph.microsoft.com/ccs.readWrite https://graph.microsoft.com/user.read',
-
-        request_uri: 'https://login.live.com/oauth20_authorize.srf',
-        redirect_uri: redirectUri
-    };
-
-    //ES6 template string!
-    var requestUrl = `${GRAPH_APP.request_uri}?client_id=${GRAPH_APP.id}&response_type=token&scope=${GRAPH_APP.scope}&redirect_uri=${GRAPH_APP.redirect_uri}`;
-
-    chrome.identity.launchWebAuthFlow({
-        url: requestUrl,
-        interactive: true
-    }, function (url) {
-
-        console.log('redirected to: ' + url);
-        var query = getQueryParams(url);
-        SECRETS.ACCESS_TOKEN = query.access_token;
-         var tabUrl = 'http://bing.com';
-
-         chrome.tabs.get(selectedId, function(tab) {
-             console.log(tab.url);
-              tabUrl = tab.url;
-    //<option value="b2afd7e0-c5d6-5e24-be33-8cfe676d16e9">DESKTOP-DORLJT1</option>
-            launchUri('1ea886a9-62f2-5bda-b5ad-1ed5ab0b38af', tabUrl, (err, res) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                console.log(res);
-            });
-        });
-    });
-
-   
+function createActivityForTab(tabId) {
+    login().then(function(response) {
+        console.log("Activity Login Success!", response);
+        chrome.tabs.get(tabId, function (tab) {
+            var startingTabUrl = tab.url;
+            setTimeout(function(){ //ignore re-directs
+                chrome.tabs.get(tabId, function (tab) {
+                    var tabUrl = tab.url;
+                    
+                    if(startingTabUrl == tabUrl)
+                    {
+                        var tabTitle = tab.title;
+                        if (!tabTitle) {
+                            tabTitle = tabUrl;
+                        }
     
-  });
+                        if(tabUrl.startsWith("http"))
+                        {
+                            createActivity(tabUrl, tabTitle, (err, res) => {
+                                if (err) {
+                                    console.log(err);
+                                    
+                                    return;
+                                }
+                                console.log(res);
+                                createEngagement(res.header.location, (err, res) => {
+                                    if (err) {
+                                        console.log(err);
+                                        return;
+                                    }
+                                    console.log(res);
+                                });
+                            });
+    
+                        } 
+                    }
+                });
+            }, 10000);
+        });
+      }, function(error) {
+        console.error("Activty Login Failed!", error);
+      })
+   
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    login().then(function(response) {
+        console.log("Background Success!", response);
+      }, function(error) {
+        console.error("Background Failed!", error);
+      })
+});
 
 chrome.tabs.onUpdated.addListener(function(tabId, props) {
   if (props.status == "complete" && tabId == selectedId)
-    refreshLanguage();
+    createActivityForTab(tabId);
 });
 
 chrome.tabs.onSelectionChanged.addListener(function(tabId, props) {
   selectedId = tabId;
-  refreshLanguage();
+  
 });
 
 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
   if(tabs.length > 0)
   {
       selectedId = tabs[0].id;
-    refreshLanguage();
+    
   }
 });

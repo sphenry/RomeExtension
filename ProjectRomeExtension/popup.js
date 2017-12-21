@@ -10,6 +10,7 @@
 	}
 
 
+
 	document.addEventListener('DOMContentLoaded', function () {
 
 		var launchButton = document.getElementById('launchButton');
@@ -40,7 +41,11 @@
 			var tabUrl = 'http://bing.com';
 			chrome.tabs.getSelected(null, function (tab) {
 				tabUrl = tab.url;
-				tabTitle = tab.title;
+				var tabTitle = tab.title;
+
+				if (!tabTitle) {
+					tabTitle = tabUrl;
+				}
 
 				createActivity(tabUrl, tabTitle, (err, res) => {
 					if (err) {
@@ -60,26 +65,10 @@
 			});
 		}, false);
 
-		var redirectUri = chrome.identity.getRedirectURL('oauth2');
-		STACK_APP = {
-			id: 'f7360ed3-fb64-4e37-8cc7-ecd1eedb5269',
-			scope: 'https://graph.microsoft.com/ccs.readWrite https://graph.microsoft.com/UserTimelineActivity.Write.CreatedByApp https://graph.microsoft.com/user.read',
-
-			request_uri: 'https://login.live.com/oauth20_authorize.srf',
-			redirect_uri: redirectUri
-		};
-
-		//ES6 template string!
-		var requestUrl = `${STACK_APP.request_uri}?client_id=${STACK_APP.id}&response_type=token&scope=${STACK_APP.scope}&redirect_uri=${STACK_APP.redirect_uri}`;
-
-		chrome.identity.launchWebAuthFlow({
-			url: requestUrl,
-			interactive: true
-		}, function (url) {
-
-			console.log('redirected to: ' + url);
-			var query = getQueryParams(url);
-			SECRETS.ACCESS_TOKEN = query.access_token;
+		login().then(function(response) {
+			console.log("Success!", response);
 			getGraph();
-		});
+		  }, function(error) {
+			console.error("Failed!", error);
+		  })
 	});
