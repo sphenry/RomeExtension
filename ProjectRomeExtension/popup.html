@@ -50,6 +50,22 @@
       height: 34px;
       -webkit-appearance: none;
     }
+
+    .activity-checkbox label {
+      width: 268px;
+      padding: 5px;
+      margin: 10px;
+      font-size: 16px;
+      line-height: 1;
+      border: 0;
+      border-radius: 0;
+      height: 34px;
+      -webkit-appearance: none;
+    }
+
+    .activity-checkbox {
+      margin: 10px;
+    }
   </style>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
@@ -64,9 +80,15 @@
     <button id="launchButton">Continue Now</button>
 
   </div>
-  <div class=launch-button>
+  <!--<div class=launch-button>
     <button id="activityButton">Continue Later</button>
+  </div>-->
+
+  <div class=activity-checkbox>
+    <input type="checkbox" id="activityToggle" name="activity" value="activity">
+    <label for="activityToggle">Generate UserActivity</label>
   </div>
+
 
 </body>
 
