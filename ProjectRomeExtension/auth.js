@@ -59,7 +59,6 @@ function login() {
             }, function (url) {
 
                 console.log('redirected to: ' + url);
-                var query = getQueryParams(url);
                 var code = getParameterByName('code', url);
                 superagent
                     .post('https://login.microsoftonline.com/common/oauth2/v2.0/token')

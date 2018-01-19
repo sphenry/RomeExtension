@@ -30,7 +30,8 @@ function createActivity(uri, titleString, callback) {
 
 		var activity = [{
 			"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
-			"appActivityId": uuid,
+			//			"appIdUrl": "https://shenryblob.blob.core.windows.net/windowsappidentity",
+			"appActivityId": uri,
 			"activationUrl": uri,
 			"name": titleString,
 			"appDisplayName": "Chrome",
