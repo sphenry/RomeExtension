@@ -25,7 +25,7 @@ function launchUri(deviceId, uri, callback) {
 function createActivity(uri, titleString, callback) {
 	var uuid = createGuid();
 	console.log("Calling CardedURLs");
-	superagent.get("http://cardedurls.azurewebsites.net/card?url=" + uri).end((err, res) => {
+	superagent.get("http://cardedurlsext.azurewebsites.net/card?experience=Timeline&url=" + uri).end((err, res) => {
 		var adaptiveCard = res;
 
 		var activity = [{
