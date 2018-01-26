@@ -29,8 +29,10 @@ function createActivity(uri, titleString, callback) {
 		var adaptiveCard = res;
 
 		var activity = [{
-			"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
-			//			"appIdUrl": "https://shenryblob.blob.core.windows.net/windowsappidentity",
+			//"activitySourceHost" : "https://shenryblob.blob.core.windows.net/windowsappidentity",
+			"activitySourceHost" : "shenryblob.blob.core.windows.net",
+			//"appIdUrl": "https://mmxsdktest.azurewebsites.net/" + uuid,
+				//		"appIdUrl": "https://shenryblob.blob.core.windows.net/windowsappidentity",
 			"appActivityId": uri,
 			"activationUrl": uri,
 			"name": titleString,
