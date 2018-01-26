@@ -3,7 +3,7 @@
 
   "name": "Project Rome",
   "description": "This extension uses Microsoft Project Rome to connect to devices, and generate UserActivities",
-  "version": "0.2.5",
+  "version": "0.2.6",
 
   "background": {
     "page": "background.html",
@@ -23,6 +23,7 @@
     "https://ppe.activity.windows.com/",
     "https://login.live.com/",
     "http://cardedurls.azurewebsites.net/",
+    "http://cardedurlsext.azurewebsites.net/",
     "https://login.microsoftonline.com/"
   ]
 }
